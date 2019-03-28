@@ -1,0 +1,8 @@
+---
+- name: apply security patch
+  hosts: idm-nodes
+  tags: Data protection
+
+  tasks:
+    - name: encrypt password
+      command: ls -ltr
