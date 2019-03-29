@@ -45,10 +45,9 @@
         mode: 0600
 
     - name: replace content 
-       lineinfile:
-         dest: /tmp/output.json
-         state: present
-         regexp: '{{ item.key }}'
-         line: '"{{ item.key }}": {{ item.value }}'
-       with_items:
-         - { key: '"_id":', value: '"Rumi"' }
+      shell: |
+        sed -E 's/("password":)\ "(.+)"/\1 "Token123"/' /tmp/output.json
+      register: replConent
+
+    - debug:
+        msg: "{{ replContent }}"
