@@ -35,5 +35,5 @@
         method: GET 
       register: getUrlOut
 
-     - debug:
-         msg: "{{ getUrlOut.stdout }}"
+    - debug:
+        msg: "{{ getUrlOut.stdout }}"
