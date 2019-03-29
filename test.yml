@@ -11,8 +11,16 @@
       command: netstat -ant | grep LISTEN
 
     - name: encrypt password
-      command: /opt/openidm/cli.sh secureHash openidm-admin | egrep -v 'Starting|Executing|\-BEGIN|\-END' | tr -d '\n' | tr -d ' '
+      shell: |
+        /opt/openidm/cli.sh secureHash openidm-admin |
+        egrep -v 'Starting|Executing|\-BEGIN|\-END' |
+        tr -d '\n' | tr -d ' '
       register: encryptedVal
 
     - debug:
-        var: encryptedVal
+        msg: "{{ encryptedVal.stdout }}"
+
+    - name: Copy content to file
+      copy:
+        content: "{{ encryptedVal.stdout }}"
+        dest: /tmp/output.txt
