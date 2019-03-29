@@ -1,6 +1,6 @@
 ---
 - name: apply security patch
-  hosts: idm-nodes
+  hosts: idm_nodes
   tags: Data protection
 
   tasks:
