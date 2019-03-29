@@ -25,3 +25,11 @@
         content: "{{ encryptedVal.stdout }}"
         dest: /tmp/output.txt
         mode: 0400
+
+    - name: Get existing internaluser
+      uri:
+        url: 'https://localhost:9443/openidm/internal/user/openidm-admin?_prettyPrint=true'
+        headers:
+          X-OpenIDM-Username: 'openidm-admin'
+          X-OpenIDM-Password: 'openidm-admin'
+        method: GET 
