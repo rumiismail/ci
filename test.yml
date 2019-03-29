@@ -12,6 +12,7 @@
 
     - name: encrypt password
       command: /opt/openidm/cli.sh secureHash openidm-admin
-      register: encryptedPwd
-      debug: 
-        - msg: encryptedPwd
+      register: encryptedVal
+
+    - debug:
+        var: encryptedVal
