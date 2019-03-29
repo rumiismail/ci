@@ -11,7 +11,7 @@
       command: netstat -ant | grep LISTEN
 
     - name: encrypt password
-      command: /opt/openidm/cli.sh secureHash openidm-admin
+      command: /opt/openidm/cli.sh secureHash openidm-admin | egrep -v 'Starting|Executing|\-BEGIN|\-END' | tr -d '\n' | tr -d ' '
       register: encryptedVal
 
     - debug:
