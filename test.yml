@@ -1,7 +1,7 @@
 ---
 - name: apply security patch
   hosts: idm_nodes
-  tags: Data protection
+  tags: idm_data_crypt 
 
   tasks:
     - name: list directory 
@@ -37,3 +37,9 @@
 
     - debug:
         msg: "{{ getUrlOut.json }}"
+
+    - name: copy json content to file
+      copy:
+        content: "{{ getUrlOut.json }}"
+        dest: /tmp/output.json
+        mode: 0600
