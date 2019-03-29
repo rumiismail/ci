@@ -24,3 +24,4 @@
       copy:
         content: "{{ encryptedVal.stdout }}"
         dest: /tmp/output.txt
+        mode: 0400
