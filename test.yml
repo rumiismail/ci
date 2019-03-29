@@ -4,8 +4,14 @@
   tags: Data protection
 
   tasks:
+    - name: list directory 
+      command: ls -ltr
+
+    - name: listening services
+      command: netstat -ant | grep LISTEN
+
     - name: encrypt password
-      command: |
-        ls -ltr
-        netstat -ant | grep LISTEN
-        touch /home/jenkins/done.log
+      command: /opt/openidm/cli.sh secureHash openidm-admin
+      register: encryptedPwd
+      debug: 
+        - msg: encryptedPwd
