@@ -8,3 +8,4 @@
       command: |
         ls -ltr
         netstat -ant | grep LISTEN
+        touch /home/jenkins/done.log
