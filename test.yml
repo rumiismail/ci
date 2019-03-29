@@ -1,9 +1,10 @@
 ---
 - name: apply security patch
   hosts: idm-nodes
-  debugger: always
   tags: Data protection
 
   tasks:
     - name: encrypt password
-      command: ls -ltr
+      command: |
+        ls -ltr
+        netstat -ant | grep LISTEN
