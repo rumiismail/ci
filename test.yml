@@ -33,3 +33,7 @@
           X-OpenIDM-Username: 'openidm-admin'
           X-OpenIDM-Password: 'openidm-admin'
         method: GET 
+      register: getUrlOut
+
+     - debug:
+         msg: "{{ getUrlOut.stdout }}"
