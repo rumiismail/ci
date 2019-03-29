@@ -47,7 +47,7 @@
     - name: replace content 
       shell: |
         sed -E 's/("password":)\ "(.+)"/\1 "Token123"/' /tmp/output.json
-      register: replConent
+      register: replContent
 
     - debug:
         msg: "{{ replContent }}"
