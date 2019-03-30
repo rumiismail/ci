@@ -2,52 +2,67 @@
 - name: apply security patch
   hosts: idm_nodes
   tags: idm_data_crypt 
+  vars:
+    curr_pwd: "Password123!"
+    new_pwd: "openidm-admin"
+    temp_output: /tmp/output.tmp
+    final_output: /tmp/output.json
 
   tasks:
-    - name: list directory 
-      command: ls -ltr
-
-    - name: listening services
-      command: netstat -ant | grep LISTEN
-
-    - name: encrypt password
+    - name: Get current password
       shell: |
-        /opt/openidm/cli.sh secureHash openidm-admin |
+        echo "current password is {{ curr_pwd }}"
+
+    - name: Get new password
+      shell: echo "new password is {{ new_pwd }}"  
+
+    - name: Encrypt new password
+      shell: |
+        /opt/openidm/cli.sh secureHash "{{ new_pwd }}" |
         egrep -v 'Starting|Executing|\-BEGIN|\-END' |
         tr -d '\n' | tr -d ' '
-      register: encryptedVal
-
-    - debug:
-        msg: "{{ encryptedVal.stdout }}"
+      register: encrypted
 
     - name: Copy content to file
       copy:
-        content: "{{ encryptedVal.stdout }}"
-        dest: /tmp/output.txt
+        content: "{{ encrypted.stdout }}"
+        dest: "{{ temp_output }}" 
         mode: 0400
 
-    - name: Get existing internaluser
+    - name: Get internaluser
+      uri:
+        url: 'https://localhost:9443/openidm/internal/user/openidm-admin?_prettyPrint=true'
+        headers:
+          X-OpenIDM-Username: openidm-admin
+          X-OpenIDM-Password: "{{ curr_pwd }}"
+        method: GET 
+      register: getUrlOut
+
+    - name: Copy json response to file
+      copy:
+        content: "{{ getUrlOut.json }}"
+        dest: "{{ final_output }}" 
+        mode: 0600
+
+    - name: Modify json content 
+      lineinfile: 
+        dest: "{{ final_output }}" 
+        regexp: '(.*)("password".*)("roles".*)'
+        line: '\g<1>"password": {{ encrypted.stdout }}, \g<3>' 
+        backrefs: true
+      register: replContent
+
+    - name: read from file
+      shell: cat "{{ final_output }}"
+      register: json_body
+
+    - name: Update internaluser record
       uri:
         url: 'https://localhost:9443/openidm/internal/user/openidm-admin?_prettyPrint=true'
         headers:
           X-OpenIDM-Username: 'openidm-admin'
-          X-OpenIDM-Password: 'openidm-admin'
-        method: GET 
-      register: getUrlOut
-
-    - debug:
-        msg: "{{ getUrlOut.json }}"
-
-    - name: copy json content to file
-      copy:
-        content: "{{ getUrlOut.json }}"
-        dest: /tmp/output.json
-        mode: 0600
-
-    - name: replace content 
-      shell: |
-        sed -E 's/("password":)\ "(.+)"/\1 "Token123"/' /tmp/output.json
-      register: replContent
-
-    - debug:
-        msg: "{{ replContent }}"
+          X-OpenIDM-Password: "{{ curr_pwd }}"
+        method: PUT
+        body_format: json
+        body: "{{ json_body.stdout }}"
+      register: putUrlOut
