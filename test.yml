@@ -1,5 +1,5 @@
 ---
-- name: apply security patch
+- name: Update IDM credentials 
   hosts: idm_nodes
   tags: idm_data_crypt 
   vars:
@@ -9,27 +9,27 @@
     final_output: /tmp/output.json
 
   tasks:
-    - name: Get current password
+    - name: Get current token 
       shell: |
         echo "current password is {{ curr_pwd }}"
 
-    - name: Get new password
+    - name: Get new token 
       shell: echo "new password is {{ new_pwd }}"  
 
-    - name: Encrypt new password
+    - name: Encrypt new token 
       shell: |
         /opt/openidm/cli.sh secureHash "{{ new_pwd }}" |
         egrep -v 'Starting|Executing|\-BEGIN|\-END' |
         tr -d '\n' | tr -d ' '
       register: encrypted
 
-    - name: Copy content to file
+    - name: Save encrypted content to file
       copy:
         content: "{{ encrypted.stdout }}"
         dest: "{{ temp_output }}" 
         mode: 0400
 
-    - name: Get internaluser
+    - name: Get internaluser data
       uri:
         url: 'https://localhost:9443/openidm/internal/user/openidm-admin?_prettyPrint=true'
         headers:
@@ -38,13 +38,13 @@
         method: GET 
       register: getUrlOut
 
-    - name: Copy json response to file
+    - name: Save json response to file
       copy:
         content: "{{ getUrlOut.json }}"
         dest: "{{ final_output }}" 
         mode: 0600
 
-    - name: Modify json content 
+    - name: Modify the json content 
       lineinfile: 
         dest: "{{ final_output }}" 
         regexp: '(.*)("password".*)("roles".*)'
@@ -52,7 +52,7 @@
         backrefs: true
       register: replContent
 
-    - name: read from file
+    - name: Read json content from file
       shell: cat "{{ final_output }}"
       register: json_body
 
@@ -65,4 +65,3 @@
         method: PUT
         body_format: json
         body: "{{ json_body.stdout }}"
-      register: putUrlOut
