@@ -5,8 +5,8 @@
   vars:
     curr_pwd: 'openidm-admin'
     new_pwd: 'openidm-admin'
-    temp_output: /tmp/output.tmp
-    final_output: /tmp/output.json
+    temp_output: /tmp/tmpIDM.txt
+    final_output: /tmp/tmpIDM.json
 
   tasks:
 
@@ -43,7 +43,7 @@
       register: getUrlOut
 
     - debug:
-        msg: "{{ getUrlOut }}"
+        msg: "{{ getUrlOut.json }}"
 
     - name: Save json response to file
       copy:
