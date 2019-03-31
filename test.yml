@@ -11,7 +11,7 @@
   tasks:
 
     - debug:
-        msg: "{{ idm_admin_new_pwd }}"
+        msg: idm_admin_new_pwd
 
     - name: Get current token 
       shell: |
