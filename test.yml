@@ -10,11 +10,11 @@
 
   tasks:
     - name: Print extra vars
-      shell: echo {{ idm_admin_new_pwd }}
+      shell: echo "{{ idm_admin_new_pwd }}"
       register: extra_var1
 
     - debug:
-        msg: {{ extra_var1.stdout }}
+        msg: "{{ extra_var1.stdout }}"
 
     - name: Get current token 
       shell: |
