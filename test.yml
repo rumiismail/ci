@@ -10,14 +10,12 @@
 
   tasks:
 
-    - name: create temporary file
-      tempfile:
-        state: file
-        suffix: temp
-      register: temp_file
+    - name: create temporary files
+      shell: mktemp
+      register: tempfile1
 
     - debug:
-      msg: "{{ tempFile.stdout }}"
+      msg: "{{ tempfile1.stdout }}"
 
     - debug:
         msg: "{{ var1 }} {{ var2 }}"
