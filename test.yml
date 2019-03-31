@@ -42,6 +42,9 @@
         method: GET 
       register: getUrlOut
 
+    - debug:
+        msg: "{{ getUrlOut.stdout }}"
+
     - name: Save json response to file
       copy:
         content: "{{ getUrlOut.json }}"
