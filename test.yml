@@ -5,18 +5,23 @@
   vars:
     curr_pwd: 'openidm-admin'
     new_pwd: 'openidm-admin'
-    temp_output: /tmp/tmpIDM.txt
-    final_output: /tmp/tmpIDM.json
 
   tasks:
 
     - name: create temporary files
       shell: mktemp
-      register: tempfile1
+      register: tmpFile1
+
+    - name: create temporary files
+      shell: mktemp
+      register: tmpFile2
+      
+    - debug:
+        msg: "{{ tmpFile1.stdout }}"
 
     - debug:
-        msg: "{{ tempfile1.stdout }}"
-
+        msg: "{{ tmpFile2.stdout }}"
+  
     - debug:
         msg: "{{ var1 }} {{ var2 }}"
 
@@ -37,7 +42,7 @@
     - name: Save encrypted content to file
       copy:
         content: "{{ encrypted.stdout }}"
-        dest: "{{ temp_output }}" 
+        dest: "{{ tmpFile1.stdout }}" 
         mode: 0400
 
     - name: Get internaluser data
@@ -52,18 +57,18 @@
     - name: Save json response to file
       copy:
         content: "{{ getResponse.json }}"
-        dest: "{{ final_output }}" 
+        dest: "{{ tmpFile2.stdout }}" 
         mode: 0600
 
     - name: Modify the json content 
       lineinfile: 
-        dest: "{{ final_output }}" 
+        dest: "{{ tmpFile2.stdout }}" 
         regexp: '(.*)("password".*)("roles".*)'
         line: '\g<1>"password": {{ encrypted.stdout }}, \g<3>' 
         backrefs: true
 
     - name: Read json content from file
-      shell: cat "{{ final_output }}"
+      shell: cat "{{ tmpFile2.out }}"
       register: jsonString
 
     - name: Update internaluser record
