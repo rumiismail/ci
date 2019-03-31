@@ -10,17 +10,17 @@
 
     - name: create temporary files
       shell: mktemp
-      register: tmpFile1
+      register: _FILE1_
 
     - name: create temporary files
       shell: mktemp
-      register: tmpFile2
+      register: _FILE2_
       
     - debug:
-        msg: "{{ tmpFile1.stdout }}"
+        msg: "{{ _FILE1_.stdout }}"
 
     - debug:
-        msg: "{{ tmpFile2.stdout }}"
+        msg: "{{ _FILE2_.stdout }}"
   
     - debug:
         msg: "{{ var1 }} {{ var2 }}"
@@ -42,7 +42,7 @@
     - name: Save encrypted content to file
       copy:
         content: "{{ encrypted.stdout }}"
-        dest: "{{ tmpFile1.stdout }}" 
+        dest: "{{ _FILE1_.stdout }}" 
         mode: 0400
 
     - name: Get internaluser data
@@ -57,18 +57,18 @@
     - name: Save json response to file
       copy:
         content: "{{ getResponse.json }}"
-        dest: "{{ tmpFile2.stdout }}" 
+        dest: "{{ _FILE2_.stdout }}" 
         mode: 0600
 
     - name: Modify the json content 
       lineinfile: 
-        dest: "{{ tmpFile2.stdout }}" 
+        dest: "{{ _FILE2_.stdout }}" 
         regexp: '(.*)("password".*)("roles".*)'
         line: '\g<1>"password": {{ encrypted.stdout }}, \g<3>' 
         backrefs: true
 
     - name: Read json content from file
-      shell: cat "{{ tmpFile2.out }}"
+      shell: cat "{{ _FILE2_.stdout }}"
       register: jsonString
 
     - name: Update internaluser record
