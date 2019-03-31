@@ -16,7 +16,7 @@
         suffix: temp
       register: tempFile
 
-    debug:
+    - debug:
       msg: "{{ tempFile.stdout }}"
 
     - debug:
