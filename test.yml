@@ -3,15 +3,15 @@
   hosts: idm_nodes
   tags: idm_data_crypt 
   vars:
-    curr_pwd: "{{ var1 }}"
-    new_pwd: "{{ var2 }}"
+    curr_pwd: "openidm-admin"
+    new_pwd: "Password123!"
     temp_output: /tmp/output.tmp
     final_output: /tmp/output.json
 
   tasks:
 
     - debug:
-        msg: "{{ curr_pwd }} {{ new_pwd }}"
+        msg: "{{ var1 }} {{ var2 }}"
 
     - name: Get current token 
       shell: |
