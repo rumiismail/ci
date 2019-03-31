@@ -43,7 +43,7 @@
       register: getUrlOut
 
     - debug:
-        msg: "{{ getUrlOut.stdout }}"
+        msg: "{{ getUrlOut }}"
 
     - name: Save json response to file
       copy:
