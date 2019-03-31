@@ -10,10 +10,19 @@
 
   tasks:
 
+    - name: create temporary file
+      tempfile:
+        state: file
+        suffix: temp
+      register: tempFile
+
+    debug:
+      msg: "{{ tempFile.stdout }}"
+
     - debug:
         msg: "{{ var1 }} {{ var2 }}"
 
-    - name: Get current token 
+    - name: Read all tokens 
       shell: |
         echo "current password is {{ curr_pwd }}"
 
@@ -40,14 +49,11 @@
           X-OpenIDM-Username: openidm-admin
           X-OpenIDM-Password: "{{ curr_pwd }}"
         method: GET 
-      register: getUrlOut
-
-    - debug:
-        msg: "{{ getUrlOut.json }}"
+      register: getResponse
 
     - name: Save json response to file
       copy:
-        content: "{{ getUrlOut.json }}"
+        content: "{{ getResponse.json }}"
         dest: "{{ final_output }}" 
         mode: 0600
 
@@ -57,11 +63,10 @@
         regexp: '(.*)("password".*)("roles".*)'
         line: '\g<1>"password": {{ encrypted.stdout }}, \g<3>' 
         backrefs: true
-      register: replContent
 
     - name: Read json content from file
       shell: cat "{{ final_output }}"
-      register: json_body
+      register: jsonString
 
     - name: Update internaluser record
       uri:
@@ -71,4 +76,4 @@
           X-OpenIDM-Password: "{{ curr_pwd }}"
         method: PUT
         body_format: json
-        body: "{{ json_body.stdout }}"
+        body: "{{ jsonString.stdout }}"
