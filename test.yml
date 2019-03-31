@@ -15,7 +15,7 @@
       register: tempfile1
 
     - debug:
-      msg: "{{ tempfile1.stdout }}"
+        msg: "{{ tempfile1.stdout }}"
 
     - debug:
         msg: "{{ var1 }} {{ var2 }}"
