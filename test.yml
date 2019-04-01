@@ -5,7 +5,6 @@
   vars:
     curr_pwd: 'openidm-admin'
 
-
   tasks:
     - block: 
       - name: create temporary file 1
