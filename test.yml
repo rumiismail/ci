@@ -5,6 +5,7 @@
   vars:
     curr_pwd: 'openidm-admin'
 
+
   tasks:
     - block: 
       - name: create temporary file 1
@@ -18,6 +19,10 @@
       - name: Read all tokens 
         shell: |
           echo "current password is {{ curr_pwd }}"
+        register: npwd
+
+      - debug:
+          msg: "{{ npwd.stdout }}"
 
       - name: Get new token 
         shell: echo "new password is {{ new_pwd }}"  
