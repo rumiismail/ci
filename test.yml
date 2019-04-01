@@ -72,4 +72,4 @@
           body_format: json
           body: "{{ jsonString.stdout }}"
 
-      when: inventory_hostname.label == 'NODE_2'
+      when: '{{ label }}' == 'NODE_2'
