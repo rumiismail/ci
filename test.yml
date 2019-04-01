@@ -4,7 +4,6 @@
   tags: idm_data_crypt 
   vars:
     curr_pwd: 'openidm-admin'
-    new_pwd: 'openidm-admin'
 
   tasks:
     - block: 
@@ -72,4 +71,4 @@
           body_format: json
           body: "{{ jsonString.stdout }}"
 
-      when: label == 'NODE_2'
+      when: label == target_node
