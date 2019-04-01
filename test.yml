@@ -1,6 +1,6 @@
 ---
 - name: Update IDM credentials 
-  hosts: all_nodes
+  hosts: idm_nodes
   tags: idm_data_crypt 
   vars:
     curr_pwd: 'openidm-admin'
@@ -72,5 +72,4 @@
           body_format: json
           body: "{{ jsonString.stdout }}"
 
-      when: >
-            inventory_hostname == 'idp-openidm'
+      when: inventory_hostname in groups['idm-master']
