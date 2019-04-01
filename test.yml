@@ -8,13 +8,13 @@
 
   tasks:
 
-    - name: create temporary files
+    - name: create temporary file 1
       shell: mktemp
-      register: _FILE1_
+      register: _FILE~1_
 
-    - name: create temporary files
+    - name: create temporary file 2
       shell: mktemp
-      register: _FILE2_
+      register: _FILE~2_
 
     - name: Read all tokens 
       shell: |
@@ -33,7 +33,7 @@
     - name: Save encrypted content to file
       copy:
         content: "{{ encrypted.stdout }}"
-        dest: "{{ _FILE1_.stdout }}" 
+        dest: "{{ _FILE~1_.stdout }}" 
         mode: 0400
 
     - name: Get internaluser data
@@ -48,18 +48,18 @@
     - name: Save json response to file
       copy:
         content: "{{ getResponse.json }}"
-        dest: "{{ _FILE2_.stdout }}" 
+        dest: "{{ _FILE~2_.stdout }}" 
         mode: 0600
 
     - name: Modify the json content 
       lineinfile: 
-        dest: "{{ _FILE2_.stdout }}" 
+        dest: "{{ _FILE~2_.stdout }}" 
         regexp: '(.*)("password".*)("roles".*)'
         line: '\g<1>"password": {{ encrypted.stdout }}, \g<3>' 
         backrefs: true
 
     - name: Read json content from file
-      shell: cat "{{ _FILE2_.stdout }}"
+      shell: cat "{{ _FILE~2_.stdout }}"
       register: jsonString
 
     - name: Update internaluser record
