@@ -4,6 +4,7 @@
   tags: idm_data_crypt 
   vars:
     curr_pwd: 'openidm-admin'
+  become: true
 
   tasks:
     - block: 
