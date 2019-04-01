@@ -18,13 +18,17 @@
       - name: Read all tokens 
         shell: |
           echo "current password is {{ curr_pwd }}"
+        register: cpwd
+
+      - debug:
+          msg: "{{ cpwd.stdout }}"
+
+      - name: Get new token 
+        shell: echo "new password is {{ new_pwd }}"  
         register: npwd
 
       - debug:
           msg: "{{ npwd.stdout }}"
-
-      - name: Get new token 
-        shell: echo "new password is {{ new_pwd }}"  
 
       - name: Encrypt new token 
         shell: |
