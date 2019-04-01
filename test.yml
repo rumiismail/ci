@@ -8,19 +8,16 @@
 
   tasks:
     - block: 
-      - name: create temporary file 1
+      - name: Create temporary file 1
         shell: mktemp
         register: _FILE1_
 
-      - name: create temporary file 2
+      - name: Create temporary file 2
         shell: mktemp
         register: _FILE2_
 
-      - name: Read all tokens 
-        shell: echo "current password is {{ curr_pwd }}"
-
-      - name: Get new token 
-        shell: echo "new password is {{ new_pwd }}"  
+      - name: Read current token
+        shell: echo "current token is {{ curr_pwd }}" 
 
       - name: Encrypt new token 
         shell: |
