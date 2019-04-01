@@ -4,6 +4,7 @@
   tags: idm_data_crypt 
   vars:
     curr_pwd: 'openidm-admin'
+  become: true
 
   tasks:
     - block: 
@@ -16,19 +17,10 @@
         register: _FILE2_
 
       - name: Read all tokens 
-        shell: |
-          echo "current password is {{ curr_pwd }}"
-        register: cpwd
-
-      - debug:
-          msg: "{{ cpwd.stdout }}"
+        shell: echo "current password is {{ curr_pwd }}"
 
       - name: Get new token 
         shell: echo "new password is {{ new_pwd }}"  
-        register: npwd
-
-      - debug:
-          msg: "{{ npwd.stdout }}"
 
       - name: Encrypt new token 
         shell: |
