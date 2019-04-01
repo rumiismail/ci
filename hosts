@@ -1,3 +1,7 @@
-[idm_nodes]
+[all_nodes]
+idp-pdb ansible_ssh_host=192.168.34.91
+idp-openidm ansible_ssh_host=192.168.34.12
+
+[idm_master]
 idp-openidm ansible_ssh_host=192.168.34.12
 
