@@ -71,4 +71,12 @@
           body_format: json
           body: "{{ jsonString.stdout }}"
 
+      - name: Remove temporary files
+        file: 
+          path: '{{ item }}'
+          state: absent 
+        with_items:
+          - '{{ _FILE1_.stdout }}'
+          - '{{ _FILE2_.stdout }}'
+
       when: label == target_node
