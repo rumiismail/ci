@@ -72,4 +72,4 @@
           body_format: json
           body: "{{ jsonString.stdout }}"
 
-      when: inventory_hostname in groups['idm_master']
+      when: inventory_hostname == 'idp-openidm'
