@@ -7,8 +7,7 @@
     new_pwd: 'openidm-admin'
 
   tasks:
-    - name: run all tasks
-      block: 
+    - block: 
         - name: create temporary file 1
           shell: mktemp
           register: _FILE1_
