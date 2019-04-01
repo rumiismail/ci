@@ -1,6 +1,6 @@
 ---
 - name: Update IDM credentials 
-  hosts: all_nodes
+  hosts: idam_nodes
   tags: idm_data_crypt 
   vars:
     curr_pwd: 'openidm-admin'
