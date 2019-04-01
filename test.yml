@@ -7,70 +7,70 @@
     new_pwd: 'openidm-admin'
 
   tasks:
-    - block: 
-      - name: create temporary file 1
-        shell: mktemp
-        register: _FILE1_
+    - name: run all tasks
+      block: 
+        - name: create temporary file 1
+          shell: mktemp
+          register: _FILE1_
 
-      - name: create temporary file 2
-        shell: mktemp
-        register: _FILE2_
+        - name: create temporary file 2
+          shell: mktemp
+          register: _FILE2_
 
-      - name: Read all tokens 
-        shell: |
-          echo "current password is {{ curr_pwd }}"
+        - name: Read all tokens 
+          shell: |
+            echo "current password is {{ curr_pwd }}"
 
-      - name: Get new token 
-        shell: echo "new password is {{ new_pwd }}"  
+        - name: Get new token 
+          shell: echo "new password is {{ new_pwd }}"  
 
-      - name: Encrypt new token 
-        shell: |
-          /opt/openidm/cli.sh secureHash "{{ new_pwd }}" |
-          egrep -v 'Starting|Executing|\-BEGIN|\-END' |
-          tr -d '\n' | tr -d ' '
-        register: encrypted
+        - name: Encrypt new token 
+          shell: |
+            /opt/openidm/cli.sh secureHash "{{ new_pwd }}" |
+            egrep -v 'Starting|Executing|\-BEGIN|\-END' |
+            tr -d '\n' | tr -d ' '
+          register: encrypted
 
-      - name: Save encrypted content to file
-        copy:
-          content: "{{ encrypted.stdout }}"
-          dest: "{{ _FILE1_.stdout }}" 
-          mode: 0400
+        - name: Save encrypted content to file
+          copy:
+            content: "{{ encrypted.stdout }}"
+            dest: "{{ _FILE1_.stdout }}" 
+            mode: 0400
 
-      - name: Get internaluser data
-        uri:
-          url: 'https://localhost:9443/openidm/internal/user/openidm-admin?_prettyPrint=true'
-          headers:
-            X-OpenIDM-Username: openidm-admin
-            X-OpenIDM-Password: "{{ curr_pwd }}"
-          method: GET 
-        register: getResponse
+        - name: Get internaluser data
+          uri:
+            url: 'https://localhost:9443/openidm/internal/user/openidm-admin?_prettyPrint=true'
+            headers:
+              X-OpenIDM-Username: openidm-admin
+              X-OpenIDM-Password: "{{ curr_pwd }}"
+            method: GET 
+          register: getResponse
 
-      - name: Save json response to file
-        copy:
-          content: "{{ getResponse.json }}"
-          dest: "{{ _FILE2_.stdout }}" 
-          mode: 0600
+        - name: Save json response to file
+          copy:
+            content: "{{ getResponse.json }}"
+            dest: "{{ _FILE2_.stdout }}" 
+            mode: 0600
 
-      - name: Modify the json content 
-        lineinfile: 
-          dest: "{{ _FILE2_.stdout }}" 
-          regexp: '(.*)("password".*)("roles".*)'
-          line: '\g<1>"password": {{ encrypted.stdout }}, \g<3>' 
-          backrefs: true
+        - name: Modify the json content 
+          lineinfile: 
+            dest: "{{ _FILE2_.stdout }}" 
+            regexp: '(.*)("password".*)("roles".*)'
+            line: '\g<1>"password": {{ encrypted.stdout }}, \g<3>' 
+            backrefs: true
 
-      - name: Read json content from file
-        shell: cat "{{ _FILE2_.stdout }}"
-        register: jsonString
+        - name: Read json content from file
+          shell: cat "{{ _FILE2_.stdout }}"
+          register: jsonString
 
-      - name: Update internaluser record
-        uri:
-          url: 'https://localhost:9443/openidm/internal/user/openidm-admin?_prettyPrint=true'
-          headers:
-            X-OpenIDM-Username: 'openidm-admin'
-            X-OpenIDM-Password: "{{ curr_pwd }}"
-          method: PUT
-          body_format: json
-          body: "{{ jsonString.stdout }}"
+        - name: Update internaluser record
+          uri:
+            url: 'https://localhost:9443/openidm/internal/user/openidm-admin?_prettyPrint=true'
+            headers:
+              X-OpenIDM-Username: 'openidm-admin'
+              X-OpenIDM-Password: "{{ curr_pwd }}"
+            method: PUT
+            body_format: json
+            body: "{{ jsonString.stdout }}"
 
-      when: >
-            inventory_hostname == 'idp-openidm'
+      when: nventory_hostname == 'idp-openidm'
